@@ -1,3 +1,4 @@
 {
-	"name": "railbound"
+	"name": "railbound",
+	"buildOptions-windows": ["debugInfoC"]
 }
