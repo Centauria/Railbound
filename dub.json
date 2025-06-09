@@ -1,5 +1,10 @@
 {
+	"buildOptions-windows": [
+		"debugInfoC"
+	],
+	"dependencies": {
+		"mir-algorithm": "~>3.22.3"
+	},
 	"name": "railbound",
-	"targetPath": "build",
-	"buildOptions-windows": ["debugInfoC"]
+	"targetPath": "build"
 }

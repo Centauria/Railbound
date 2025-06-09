@@ -1,13 +1,17 @@
-import std.stdio;
 import game;
+import mir.ndslice;
+import mir.stdio;
 
 void main()
 {
     Cell[10] cells;
-    printf("%d\n", cells[2].type);
-    printf("%lld\n", Cell.sizeof);
+    cells[2].type.writeln;
+    Cell.sizeof.writeln;
     cells[2].ports = 0x1110;
-    printf("%d\n", cells[2].nports);
+    cells[2].nports.writeln;
 
     auto m = GameMap(5, 3, 1, 3);
+    auto x = slice!float(2, 3);
+    x[] = 0;
+    x.writeln;
 }
