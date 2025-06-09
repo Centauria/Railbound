@@ -37,7 +37,7 @@ struct Cell
      */
     uint16_t connectivity;
 
-    int nports()
+    int nports() const
     {
         return popcnt(ports);
     }
