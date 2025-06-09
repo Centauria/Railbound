@@ -1,4 +1,5 @@
 {
 	"name": "railbound",
+	"targetPath": "build",
 	"buildOptions-windows": ["debugInfoC"]
 }
