@@ -1,7 +1,10 @@
 import std.stdint;
 import core.bitop;
+import mir.ndslice;
+import mir.ndslice.slice : Slice;
+import mir.stdio;
 
-enum Port
+enum Port : int8_t
 {
     L,
     R,
@@ -9,7 +12,7 @@ enum Port
     D
 }
 
-enum CellType
+enum CellType : int16_t
 {
     Normal,
     Locked,
@@ -28,14 +31,14 @@ struct CarState
 struct Cell
 {
     CellType type;
-    uint16_t ports;
+    uint8_t ports;
 
     /** 
      * when nports == 3, connectivity == 0 means the side port connects to lower main port, connectivity == 1 otherwise.
-     * e. g. ports == 0x1110 (LRUD: 0111), connectivity == 0 means R <-> U.
-     * ports == 0x1011 (LRUD: 1101), connectivity == 0 means D <-> L.
+     * e. g. ports == 0b1110 (LRUD: 0111), connectivity == 0 means R <-> U.
+     * ports == 0b1011 (LRUD: 1101), connectivity == 0 means D <-> L.
      */
-    uint16_t connectivity;
+    uint8_t connectivity;
 
     int nports() const
     {
@@ -51,7 +54,7 @@ struct Cell
 struct GameMap
 {
     size_t nrows, ncols;
-    Cell[] cells;
+    Slice!(Cell*, 2) cells;
     CarState[] initialCarState;
     size_t nblocks;
 
@@ -61,20 +64,20 @@ struct GameMap
     {
         this.nrows = nrows;
         this.ncols = ncols;
-        cells = new Cell[nrows * ncols];
+        cells = slice!Cell(nrows, ncols);
+        cells.each!((ref cell) { cell = Cell(); });
         initialCarState = new CarState[ncars];
         this.nblocks = nblocks;
     }
 
     void reset()
     {
-        foreach (Cell cell; cells)
-        {
+        cells.each!((ref cell) {
             if (cell.type == CellType.Normal)
             {
                 cell.ports = 0;
             }
-        }
+        });
         carState = initialCarState.dup;
     }
 }
@@ -82,6 +85,15 @@ struct GameMap
 unittest
 {
     auto m = GameMap(5, 3, 1, 3);
-    assert(m.cells[0].type == CellType.Normal);
+    assert(m.cells.shape == [5, 3]);
+    assert(m.cells[0, 0].type == CellType.Normal);
+    assert(m.cells[4, 2].ports == 0);
+    assert(m.cells[4, 2].nports == 0);
+    m.cells[4, 2].ports = 0b0100;
+    assert(m.cells[4, 2].nports == 1);
+    m.cells[4, 2].ports = 0b0110;
+    assert(m.cells[4, 2].nports == 2);
+    m.cells[4, 2].ports = 0b1101;
+    assert(m.cells[4, 2].nports == 3);
     assert(m.initialCarState[0].d == 0);
 }
