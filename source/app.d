@@ -12,4 +12,6 @@ void main()
     m.cells.sizeof.writeln;
     m.sizeof.writeln;
     m.cells[0, 0].type.writeln;
+
+    m = GameMap("ex.txt");
 }

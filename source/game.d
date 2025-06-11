@@ -12,20 +12,24 @@ enum Port : int8_t
     D
 }
 
+alias Direction = Port;
+
 enum CellType : int16_t
 {
     Normal,
     Locked,
+    Block,
     Switch,
     Gate,
     Tunnel,
-    Platform
+    Platform,
+    Target
 }
 
 struct CarState
 {
-    uint32_t i, j;
-    Port d;
+    uint8_t i, j;
+    Direction d;
 }
 
 struct Cell
@@ -70,6 +74,19 @@ struct GameMap
         this.nblocks = nblocks;
     }
 
+    this(string mapconfig)
+    {
+        auto file = File(mapconfig, "r");
+        string content = file.readln(null);
+        auto tables = content.splitter("\n\n").array;
+        assert(tables.length >= 2, "format error");
+        tables[0].writeln;
+        tables[1].writeln;
+    }
+
+    /** 
+     * Reset map with initial cells.
+     */
     void reset()
     {
         cells.each!((ref cell) {
