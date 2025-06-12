@@ -1,5 +1,11 @@
 import std.stdint;
+import std.array : split;
+import std.file : readText;
+import std.csv;
+import std.string;
+
 import core.bitop;
+import mir.algorithm.iteration : each;
 import mir.ndslice;
 import mir.ndslice.slice : Slice;
 import mir.stdio;
@@ -76,11 +82,19 @@ struct GameMap
 
     this(string mapconfig)
     {
-        auto file = File(mapconfig, "r");
-        string content = file.readln(null);
-        auto tables = content.splitter("\n\n").array;
+        size_t ncars;
+        string content = readText(mapconfig);
+        auto tables = content.split("\n\n");
         assert(tables.length >= 2, "format error");
-        tables[0].writeln;
+        foreach (item; csvReader!(size_t[string])(tables[0], null))
+        {
+            nrows = item["height"];
+            ncols = item["width"];
+        }
+        foreach (item; csvReader!(string[string])(tables[1], null))
+        {
+            item.writeln;
+        }
         tables[1].writeln;
     }
 

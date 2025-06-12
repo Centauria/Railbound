@@ -13,5 +13,5 @@ void main()
     m.sizeof.writeln;
     m.cells[0, 0].type.writeln;
 
-    m = GameMap("ex.txt");
+    m = GameMap("ex.csv");
 }

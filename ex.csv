@@ -1,0 +1,12 @@
+width,height
+5,5
+
+i,j,type,ports,id,direction
+0,0,Tunnel,R,0,
+0,1,Locked,LR,,
+0,2,Locked,LR,,
+0,3,Locked,LR,,
+0,4,Target,,,
+2,4,Locked,LR,0,L
+3,1,Tunnel,R,0,
+4,4,Locked,LR,1,L
