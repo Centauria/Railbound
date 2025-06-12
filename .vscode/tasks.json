@@ -1,0 +1,70 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "dub",
+            "run": false,
+            "compiler": "$current",
+            "archType": "$current",
+            "buildType": "$current",
+            "configuration": "$current",
+            "problemMatcher": [
+                "$dmd"
+            ],
+            "label": "dub build",
+            "detail": "dub build --compiler=dmd --arch=x86_64 --build=debug --config=application"
+        },
+        {
+            "type": "dub",
+            "run": true,
+            "compiler": "$current",
+            "archType": "$current",
+            "buildType": "$current",
+            "configuration": "$current",
+            "problemMatcher": [
+                "$dmd"
+            ],
+            "label": "dub run",
+            "detail": "dub run --compiler=dmd --arch=x86_64 --build=debug --config=application"
+        },
+        {
+            "type": "dub",
+            "test": true,
+            "compiler": "$current",
+            "archType": "$current",
+            "buildType": "$current",
+            "configuration": "$current",
+            "problemMatcher": [
+                "$dmd"
+            ],
+            "label": "dub test",
+            "detail": "dub test --compiler=dmd --arch=x86_64 --build=debug --config=application"
+        },
+        {
+            "type": "dub",
+            "run": true,
+            "compiler": "$current",
+            "archType": "$current",
+            "buildType": "release-nobounds",
+            "configuration": "$current",
+            "problemMatcher": [
+                "$dmd"
+            ],
+            "label": "dub run release",
+            "detail": "dub run --compiler=dmd --arch=x86_64 --build=debug --config=application"
+        },
+        {
+            "type": "dub",
+            "test": true,
+            "compiler": "$current",
+            "archType": "$current",
+            "buildType": "release-nobounds",
+            "configuration": "$current",
+            "problemMatcher": [
+                "$dmd"
+            ],
+            "label": "dub test release",
+            "detail": "dub test --compiler=dmd --arch=x86_64 --build=debug --config=application"
+        }
+    ]
+}

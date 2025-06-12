@@ -1,12 +1,22 @@
 {
     "configurations": [
-    {
-        "type": "code-d",
-        "request": "launch",
-        "dubBuild": true,
-        "name": "Build & Debug DUB project",
-        "cwd": "${command:dubWorkingDirectory}",
-        "program": "${command:dubTarget}"
-    }
+        {
+            "type": "code-d",
+            "request": "launch",
+            // "dubBuild": false,
+            "preLaunchTask": "dub build",
+            "name": "Build & Debug DUB project",
+            "cwd": "${command:dubWorkingDirectory}",
+            "program": "build/${command:dubTarget}",
+            "debugger": "lldb",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        }
     ]
 }
