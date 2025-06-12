@@ -1,8 +1,9 @@
 import std.stdint;
-import std.array : split;
+import std.array : split, array, join;
 import std.file : readText;
 import std.csv;
-import std.string;
+import std.string : lineSplitter, strip, toUpper, empty;
+import std.conv : to, ConvException;
 
 import core.bitop;
 import mir.algorithm.iteration : each;
@@ -16,6 +17,15 @@ enum Port : int8_t
     R,
     U,
     D
+}
+
+enum PortBits : uint8_t
+{
+    None = 0x00,
+    L = 0x01,
+    R = 0x02,
+    U = 0x04,
+    D = 0x08,
 }
 
 alias Direction = Port;
@@ -36,6 +46,39 @@ struct CarState
 {
     uint8_t i, j;
     Direction d;
+}
+
+uint8_t parsePortsBitmask(string ports)
+{
+    uint8_t result = 0;
+
+    static immutable uint8_t[char] portMap = [
+        'L': PortBits.L,
+        'R': PortBits.R,
+        'U': PortBits.U,
+        'D': PortBits.D
+    ];
+
+    foreach (char c; ports.toUpper())
+    {
+        if (auto bit = c in portMap)
+            result |= *bit;
+    }
+    return result;
+}
+
+string bitmaskToPorts(uint8_t bitmask)
+{
+    string result = "";
+    if (bitmask & PortBits.L)
+        result ~= "L";
+    if (bitmask & PortBits.R)
+        result ~= "R";
+    if (bitmask & PortBits.U)
+        result ~= "U";
+    if (bitmask & PortBits.D)
+        result ~= "D";
+    return result;
 }
 
 struct Cell
@@ -75,7 +118,7 @@ struct GameMap
         this.nrows = nrows;
         this.ncols = ncols;
         cells = slice!Cell(nrows, ncols);
-        cells.each!((ref cell) { cell = Cell(); });
+        // cells.each!((ref cell) { cell = Cell(); });
         initialCarState = new CarState[ncars];
         this.nblocks = nblocks;
     }
@@ -84,18 +127,43 @@ struct GameMap
     {
         size_t ncars;
         string content = readText(mapconfig);
-        auto tables = content.split("\n\n");
-        assert(tables.length >= 2, "format error");
-        foreach (item; csvReader!(size_t[string])(tables[0], null))
+        auto lines = content.lineSplitter.array;
+        assert(lines[2] == "", "format error");
+        foreach (item; csvReader!(size_t[string])(lines[0 .. 2].join("\n"), null))
         {
             nrows = item["height"];
             ncols = item["width"];
+            cells = slice!Cell(nrows, ncols);
         }
-        foreach (item; csvReader!(string[string])(tables[1], null))
+        foreach (item; csvReader!(string[string])(lines[3 .. $].join("\n"), null))
         {
             item.writeln;
+            auto i = item["i"].to!size_t;
+            auto j = item["j"].to!size_t;
+            CellType type;
+            try
+            {
+                type = item["type"].strip.to!CellType;
+            }
+            catch (ConvException e)
+            {
+                writeln("Warning: Unknown type '", item["type"], "', using Normal");
+                type = CellType.Normal;
+            }
+            cells[i, j].type = type;
+            if (type == CellType.Locked)
+            {
+                if (!item["id"].empty)
+                {
+                    ncars += 1;
+                }
+            }
+            cells[i, j].ports = parsePortsBitmask(item["ports"]);
+            cells[i, j].ports.writeln;
+            bitmaskToPorts(cells[i, j].ports).writeln;
         }
-        tables[1].writeln;
+        ncars.writeln;
+        // tables[1].writeln;
     }
 
     /** 
