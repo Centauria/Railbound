@@ -125,7 +125,6 @@ struct GameMap
 
     this(string mapconfig)
     {
-        size_t ncars;
         string content = readText(mapconfig);
         auto lines = content.lineSplitter.array;
         assert(lines[2] == "", "format error");
@@ -134,11 +133,11 @@ struct GameMap
             nrows = item["height"];
             ncols = item["width"];
             cells = slice!Cell(nrows, ncols);
+            nblocks = item["blocks"];
         }
-        initialCarState = new CarState[0];
+        CarState[size_t] cars;
         foreach (item; csvReader!(string[string])(lines[3 .. $].join("\n"), null))
         {
-            item.writeln;
             auto i = item["i"].to!size_t;
             auto j = item["j"].to!size_t;
             CellType type;
@@ -156,16 +155,16 @@ struct GameMap
             {
                 if (!item["id"].empty)
                 {
-                    ncars += 1;
-                    initialCarState ~= CarState(i, j, item["direction"].to!Direction);
+                    cars[item["id"].to!size_t] = CarState(i, j, item["direction"].to!Direction);
                 }
             }
             cells[i, j].ports = parsePortsBitmask(item["ports"]);
-            cells[i, j].ports.writeln;
-            bitmaskToPorts(cells[i, j].ports).writeln;
         }
-        initialCarState.writeln;
-        ncars.writeln;
+        initialCarState = new CarState[cars.length];
+        foreach (size_t i; 0 .. cars.length)
+        {
+            initialCarState[i] = cars[i];
+        }
     }
 
     /** 
