@@ -44,7 +44,7 @@ enum CellType : int16_t
 
 struct CarState
 {
-    uint8_t i, j;
+    size_t i, j;
     Direction d;
 }
 
@@ -135,6 +135,7 @@ struct GameMap
             ncols = item["width"];
             cells = slice!Cell(nrows, ncols);
         }
+        initialCarState = new CarState[0];
         foreach (item; csvReader!(string[string])(lines[3 .. $].join("\n"), null))
         {
             item.writeln;
@@ -156,14 +157,15 @@ struct GameMap
                 if (!item["id"].empty)
                 {
                     ncars += 1;
+                    initialCarState ~= CarState(i, j, item["direction"].to!Direction);
                 }
             }
             cells[i, j].ports = parsePortsBitmask(item["ports"]);
             cells[i, j].ports.writeln;
             bitmaskToPorts(cells[i, j].ports).writeln;
         }
+        initialCarState.writeln;
         ncars.writeln;
-        // tables[1].writeln;
     }
 
     /** 
