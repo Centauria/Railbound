@@ -140,6 +140,7 @@ struct GameMap
         {
             auto i = item["i"].to!size_t;
             auto j = item["j"].to!size_t;
+            auto ref cell = cells[i, j];
             CellType type;
             try
             {
@@ -150,7 +151,7 @@ struct GameMap
                 writeln("Warning: Unknown type '", item["type"], "', using Normal");
                 type = CellType.Normal;
             }
-            cells[i, j].type = type;
+            cell.type = type;
             if (type == CellType.Locked)
             {
                 if (!item["id"].empty)
@@ -158,14 +159,14 @@ struct GameMap
                     cars[item["id"].to!size_t] = CarState(i, j, item["direction"].to!Direction);
                 }
             }
-            cells[i, j].ports = parsePortsBitmask(item["ports"]);
-            if (cells[i, j].nports == 3)
+            cell.ports = parsePortsBitmask(item["ports"]);
+            if (cell.nports == 3)
             {
-                cells[i, j].connectivity = item["state"].to!uint8_t;
+                cell.connectivity = item["state"].to!uint8_t;
             }
         }
         initialCarState = new CarState[cars.length];
-        foreach (size_t i; 0 .. cars.length)
+        foreach (i; 0 .. cars.length)
         {
             initialCarState[i] = cars[i];
         }
