@@ -159,6 +159,10 @@ struct GameMap
                 }
             }
             cells[i, j].ports = parsePortsBitmask(item["ports"]);
+            if (cells[i, j].nports == 3)
+            {
+                cells[i, j].connectivity = item["state"].to!uint8_t;
+            }
         }
         initialCarState = new CarState[cars.length];
         foreach (size_t i; 0 .. cars.length)
