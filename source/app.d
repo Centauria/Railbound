@@ -4,14 +4,9 @@ import mir.stdio;
 
 void main()
 {
-    Cell.sizeof.writeln;
+    auto m = GameMap("maps/3-4.csv");
 
-    auto m = GameMap(5, 3, 1, 3);
-    m.cells.writeln;
-    m.cells.shape.writeln;
-    m.cells.sizeof.writeln;
-    m.sizeof.writeln;
-    m.cells[0, 0].type.writeln;
-
-    m = GameMap("maps/3-4.csv");
+    m.writeln;
+    m.reset;
+    m.writeln;
 }

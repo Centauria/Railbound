@@ -185,6 +185,31 @@ struct GameMap
         });
         carState = initialCarState.dup;
     }
+
+    void place(size_t row, size_t col, uint8_t ports, uint8_t connectivity)
+    {
+        auto ref cell = cells[row, col];
+        if (cell.type == CellType.Normal)
+        {
+            cell.ports = ports;
+            cell.connectivity = connectivity;
+        }
+    }
+
+    void step()
+    {
+        foreach (CarState car; carState)
+        {
+            auto i = car.i;
+            auto j = car.j;
+            auto ref cell = cells[i, j];
+
+            if ((cell.ports & car.d) != 0)
+            {
+
+            }
+        }
+    }
 }
 
 unittest
